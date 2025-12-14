@@ -9,9 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 3️⃣ Copy project folders
 COPY app /app/app
-COPY models /app/models
+
 COPY data /app/data
-COPY reports /app/reports
+
 
 
 # 4️⃣ Expose Streamlit port
