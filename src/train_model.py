@@ -17,7 +17,7 @@ from sklearn.model_selection import train_test_split
 
 # Tree models
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-import xgboost as xgb
+
 
 # Optional models
 try:
