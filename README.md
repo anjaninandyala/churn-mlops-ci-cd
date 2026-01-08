@@ -1,190 +1,294 @@
 
-# 📊 Telco Customer Churn Prediction – MLOps Project
+# Containerization of Data Science Workflows for CI/CD  
+### Telecom Customer Churn Prediction (MLOps Project)
 
-## 1. Project Overview
-This project demonstrates **Containerization of Data Science Workflows for CI/CD** using Docker, Streamlit, and GitHub Actions.  
-The workflow automates:
+## 📌 Project Overview
+This project demonstrates how **Data Science workflows can be containerized and automated using CI/CD pipelines**.  
+It focuses on predicting **customer churn in the telecom industry** using machine learning, while showcasing **DevOps + MLOps practices** such as Docker, GitHub Actions, and modular pipelines.
 
-- Data preprocessing  
-- Model training  
-- Model evaluation  
-- Frontend deployment with Streamlit  
-
-It showcases **MLOps principles**, ensuring your ML pipeline runs consistently on any system.
-
----
-
-## 2. Features
-- Load and preprocess Telco customer dataset  
-- Train a Logistic Regression model for churn prediction  
-- Evaluate model performance (Accuracy, Precision, Recall, F1 Score)  
-- Streamlit frontend for live predictions and metrics  
-- Containerized using Docker (pipeline + frontend)  
-- CI/CD with GitHub Actions
+The system includes:
+- A complete ML pipeline (data preprocessing → training → evaluation)
+- A Streamlit-based interactive dashboard (frontend)
+- A FastAPI backend for model inference
+- Docker-based containerization
+- Automated CI/CD using GitHub Actions
 
 ---
 
-## 3. Project Structure
+## 🎯 Problem Statement
+Customer churn refers to customers leaving a service provider.  
+In the telecom industry, churn rates can reach **15–25% annually**, making early prediction critical.
+
+This project predicts churn in advance so that companies can:
+- Identify high-risk customers
+- Take preventive retention actions
+- Reduce customer loss and revenue impact
+
+---
+
+## 📊 Dataset
+**Telco Customer Churn Dataset**
+
+Contains:
+- Customer demographics (gender, senior citizen, dependents)
+- Account information (tenure, contract, billing)
+- Services used (internet, security, tech support)
+- Target variable: `Churn`
+
+---
+
+## 🔄 Data Science Workflow
+1. **Data Ingestion**
+2. **Data Preprocessing**
+   - Handling missing values
+   - Encoding categorical variables
+   - Feature scaling
+3. **Model Training**
+   - Logistic Regression
+   - Random Forest
+   - Gradient Boosting
+   - XGBoost
+   - (Optional) LightGBM, CatBoost
+4. **Model Evaluation**
+   - Accuracy
+   - Precision
+   - Recall
+   - F1-score
+   - ROC Curve & Confusion Matrix
+5. **Model Selection**
+   - Best model selected automatically
+6. **Model Deployment**
+   - Served via backend API
+   - Visualized using Streamlit
+
+---
+
+## 🧠 Machine Learning Models
+- Logistic Regression  
+- Random Forest  
+- Gradient Boosting  
+- XGBoost  
+- Voting / Best Model Selection  
+
+The **best-performing model** is automatically saved and used for predictions.
+
+---
+
+## 🖥️ Frontend (Streamlit Dashboard)
+- KPI metrics (Churn rate, High-risk customers)
+- Segment analysis (Contract, Internet, Payment Method)
+- Feature importance visualization
+- Top at-risk customers table
+- Individual customer churn prediction
+- Retention recommendations for high-risk customers
+
+---
+
+## ⚙️ Backend (FastAPI)
+- REST API for churn prediction
+- Separates model logic from UI
+- Enables scalable deployment
+- Used by Streamlit for predictions
+
+---
+
+## 🐳 Containerization (Docker)
+- Frontend and backend run in separate containers
+- Ensures environment consistency
+- Easily deployable on any system
+
+Run everything with:
+```bash
+docker compose up --build
+````
+
+---
+
+## 🔁 CI/CD Pipeline (GitHub Actions)
+
+On every push:
+
+1. Run data preprocessing
+2. Train ML models
+3. Evaluate model performance
+4. Save model and metrics as artifacts
+5. Build Docker image
+
+This ensures **continuous integration and automation of ML workflows**.
+
+---
+
+## 🏗️ Project Structure
 
 ```
-
-churn-prediction-project/
+churn-mlops-ci-cd/
 │
 ├── data/
-│   ├── raw/                 # Original dataset (telco_churn.csv)
-│   └── processed/           # Processed dataset (generated automatically)
+│ ├── raw/ # Original dataset (telco_churn.csv)
+│ └── processed/ # Preprocessed dataset (auto-generated)
 │
 ├── src/
-│   ├── data_preprocessing.py
-│   ├── train_model.py
-│   ├── evaluate.py
-│   └── utils.py
+│ ├── data_preprocessing.py # Data cleaning & feature engineering
+│ ├── train_model.py # Model training & selection
+│ └── evaluate.py # Model evaluation
 │
 ├── models/
-│   └── model.pkl             # Saved ML model
+│ ├── model.pkl # Best trained ML model
+│ ├── scaler.pkl
+│ ├── label_encoders.pkl
+│ ├── columns.pkl
+│ └── metrics.json # Evaluation summary
+│
+├── reports/
+│ ├── cm_.png # Confusion matrices
+│ └── roc_.png # ROC curves
+│
+├── backend/
+│ ├── api.py # FastAPI backend
+│ └── init.py
 │
 ├── app/
-│   ├── app.py                # Streamlit frontend
-│   └── Dockerfile            # Docker container for frontend
+│ ├── app.py # Streamlit frontend
+│ └── Dockerfile # Frontend Dockerfile
 │
 ├── pipeline/
-│   ├── Dockerfile            # Pipeline container
-│   └── entrypoint.sh         # Script to run preprocessing, training, evaluation
+│ └── Dockerfile # ML pipeline container
 │
+├── docker-compose.yml # Orchestrates frontend + backend
+├── requirements.txt # Python dependencies
 ├── .github/workflows/
-│   └── ci-cd.yaml            # GitHub Actions workflow for CI/CD
-│
-├── notebooks/
-│   └── EDA.ipynb             # Exploratory Data Analysis
-│
-├── requirements.txt
+│ └── ci-cd.yaml # CI/CD workflow
 └── README.md
-
-````
+```
 
 ---
 
-## 4. Setup & Installation
+## 🚀 How to Run Locally
 
-1. **Clone the repository**
-```bash
-git clone <your-repo-url>
-cd churn-prediction-project
-````
-
-2. **Install dependencies**
+### Option 1: Docker (Recommended)
 
 ```bash
-pip install -r requirements.txt
+docker compose up --build
 ```
 
-3. **Create data folders**
-
-```bash
-mkdir -p data/raw
-mkdir -p data/processed
-```
-
-4. **Place dataset**
-   Place `telco_churn.csv` inside `data/raw/`.
+Frontend: [http://localhost:8501](http://localhost:8501)
+Backend: [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## 5. Run Locally (Python)
-
-1. **Preprocess data**
+### Option 2: Without Docker
 
 ```bash
 python src/data_preprocessing.py
-```
-
-2. **Train model**
-
-```bash
 python src/train_model.py
-```
-
-3. **Evaluate model**
-
-```bash
 python src/evaluate.py
-```
-
-4. **Run Streamlit frontend**
-
-```bash
 streamlit run app/app.py
 ```
 
-Open browser at: `http://localhost:8501`
+---
+
+## ✅ Key Outcomes
+
+* Automated ML pipeline
+* Containerized deployment
+* CI/CD-enabled model training
+* Business-focused churn insights
+* Clean MLOps architecture
 
 ---
 
-## 6. Run with Docker
+## 🔮 Future Enhancements
 
-### 🟢 Pipeline Container
-
-```bash
-docker build -t churn-pipeline ./pipeline
-docker run --rm churn-pipeline
-```
-
-### 🟢 Streamlit Frontend Container
-
-```bash
-docker build -t churn-streamlit ./app
-docker run -p 8501:8501 churn-streamlit
-```
+* Add database for prediction history
+* Advanced hyperparameter tuning
+* Cloud deployment (AWS / GCP)
+* Role-based dashboards
+* Real-time streaming data
 
 ---
 
-## 7. CI/CD (GitHub Actions)
+## 📌 Technologies Used
 
-* Triggers on push or pull request to `main` branch
-* Steps:
-
-  1. Install dependencies
-  2. Run preprocessing, training, evaluation
-  3. Save model and metrics as artifacts
-  4. Build Streamlit Docker image
-
----
-
-## 8. Folder Contents
-
-* `data/raw` → Original CSV
-* `data/processed` → Preprocessed CSV
-* `models` → Saved model and metrics
-* `src` → ML pipeline scripts
-* `app` → Streamlit UI + Dockerfile
-* `pipeline` → Docker pipeline + entrypoint script
-* `.github/workflows` → CI/CD YAML
-* `notebooks` → EDA
-* `requirements.txt` → Dependencies
+* Python
+* Scikit-learn
+* Streamlit
+* FastAPI
+* Docker & Docker Compose
+* GitHub Actions
+* Pandas, NumPy, Matplotlib, Plotly
 
 ---
 
-## 9. References
-
-* [Telco Customer Churn Dataset - Kaggle](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
-* Scikit-learn Documentation: [https://scikit-learn.org](https://scikit-learn.org)
-* Streamlit Documentation: [https://docs.streamlit.io](https://docs.streamlit.io)
-* Docker Documentation: [https://docs.docker.com](https://docs.docker.com)
-* GitHub Actions: [https://docs.github.com/en/actions](https://docs.github.com/en/actions)
-
----
-
-## 10. Authors
+## 👤 Author
 
 **Anjani Nandyala**
-B.Tech CSE – Final Year
-Project: Containerization of Data Science Workflows for CI/CD
+Final Year B.Tech (CSE)
 
-```
+````
 
 ---
 
-If you want, I can **next create a ready-to-use project architecture diagram (`architecture_diagram.png`)** that matches this README and is perfect for your viva/demo.  
+# 🟢 How to IMPORT / UPDATE README on GitHub
 
-Do you want me to do that next?
-```
+Since you already have a GitHub repo, follow this **exact sequence**:
+
+---
+
+## 1️⃣ Replace README locally
+
+1. Open your project in VS Code
+2. Open `README.md`
+3. Delete everything inside
+4. Paste the README content above
+5. Save (`Ctrl + S`)
+
+---
+
+## 2️⃣ Push README to GitHub
+
+Run these commands in your project folder:
+
+```bash
+git add README.md
+git commit -m "Update final README with CI/CD and MLOps workflow"
+git push origin main
+````
+
+---
+
+## 3️⃣ Verify on GitHub
+
+* Open your GitHub repo
+* Refresh the page
+* You should see the **new README rendered beautifully**
+
+---
+
+## 🧠 What to say if mentor asks “Did you document it?”
+
+Say this confidently:
+
+> “Yes, I documented the complete data science workflow, CI/CD pipeline, containerization, and system architecture in the project README.”
+
+That’s a **perfect academic + industry answer**.
+
+---
+
+## 🟢 Final Confirmation Checklist
+
+✅ Backend added
+✅ Docker working
+✅ CI/CD configured
+✅ GitHub updated
+✅ README professional
+✅ Final-year appropriate
+
+You are **100% ready**.
+
+If you want next:
+
+* viva questions & answers
+* final demo explanation
+* architecture explanation in 1 minute
+
+Just tell me 👌
