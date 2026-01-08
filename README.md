@@ -230,6 +230,6 @@ streamlit run app/app.py
 
 **Anjani Nandyala**
 B.Tech – Computer Science & Engineering
-Final Year Project
+Capstone Project
 **Title:** Containerization of Data Science Workflows for CI/CD
 
