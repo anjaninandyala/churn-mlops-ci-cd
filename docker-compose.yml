@@ -1,15 +1,35 @@
 
-
 services:
   churn-dashboard:
     build:
       context: .
       dockerfile: app/Dockerfile
     container_name: churn_app
+    command: streamlit run app/app.py --server.port=8501 --server.address=0.0.0.0
+
     ports:
       - "8501:8501"
     volumes:
       - ./models:/app/models
       - ./data:/app/data
       - ./reports:/app/reports
+    depends_on:
+      - churn-backend
+    restart: unless-stopped
+
+    environment:
+      - BACKEND_URL=http://churn-backend:8000/predict
+
+  churn-backend:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: churn_backend
+    command: python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000
+
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
     restart: unless-stopped

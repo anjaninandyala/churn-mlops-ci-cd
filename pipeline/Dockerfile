@@ -14,7 +14,10 @@ COPY ../data data
 COPY ../models models
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --default-timeout=100 --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
+
+
 
 # Copy entrypoint script
 COPY entrypoint.sh entrypoint.sh

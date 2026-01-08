@@ -7,6 +7,12 @@ import os
 import plotly.express as px
 import plotly.graph_objects as go
 import base64
+import requests
+
+BACKEND_URL = os.getenv(
+    "BACKEND_URL",
+    "http://localhost:8000/predict"   # default for local run
+)
 
 
 # -----------------------
@@ -363,6 +369,19 @@ def preprocess_input(input_df: pd.DataFrame) -> pd.DataFrame:
     df[numeric_cols] = scaler.transform(df[numeric_cols])
     df = df.reindex(columns=columns, fill_value=0)
     return df
+def predict_via_backend(input_df):
+    payload = input_df.to_dict(orient="records")[0]
+
+    try:
+        response = requests.post(BACKEND_URL, json=payload, timeout=5)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except Exception as e:
+        st.error(f"Backend error: {e}")
+        return None
+
 
 
 # ============================================================
@@ -569,6 +588,34 @@ with tab_overview:
         )
         st.plotly_chart(fig_contract, use_container_width=True)
 
+# ---------------- RETENTION RECOMMENDATION LOGIC ----------------
+def retention_recommendation(row, short=True):
+    recs = []
+
+    if row["Contract"] == "Month-to-month":
+        recs.append("Offer discount on long-term contract")
+
+    if row["MonthlyCharges"] > 80:
+        recs.append("Provide billing discount or plan optimization")
+
+    if row["InternetService"] == "Fiber optic":
+        recs.append("Check service quality / offer support")
+
+    if row["tenure"] < 12:
+        recs.append("Provide loyalty or welcome benefits")
+
+    if not recs:
+        recs.append("Maintain current engagement strategy")
+    
+    if short:
+        return " | ".join(recs[:2]) 
+    else:
+        return recs
+
+
+
+
+
 # ============================================================
 # TAB 2 – SEGMENT ANALYSIS & FEATURE IMPORTANCE
 # ============================================================
@@ -612,7 +659,12 @@ with tab_segments:
                 .mean().mul(100).reset_index()
                 .rename(columns={"churn_label": "ChurnRate(%)"})
             )
-            fig_int = px.bar(seg1, x="InternetService", y="ChurnRate(%)", template="glass_neon")
+            fig_int = px.bar(
+                seg1,
+                x="InternetService",
+                y="ChurnRate(%)",
+                template="glass_neon"
+            )
             fig_int.update_layout(height=320)
             st.plotly_chart(fig_int, use_container_width=True)
 
@@ -623,7 +675,12 @@ with tab_segments:
                 .mean().mul(100).reset_index()
                 .rename(columns={"churn_label": "ChurnRate(%)"})
             )
-            fig_pay = px.bar(seg2, x="PaymentMethod", y="ChurnRate(%)", template="glass_neon")
+            fig_pay = px.bar(
+                seg2,
+                x="PaymentMethod",
+                y="ChurnRate(%)",
+                template="glass_neon"
+            )
             fig_pay.update_layout(height=320)
             st.plotly_chart(fig_pay, use_container_width=True)
 
@@ -635,11 +692,16 @@ with tab_segments:
 
     top_risk = filtered_df.sort_values("churn_prob", ascending=False).head(10)
 
-    # Prepare dataframe
     show_df = top_risk[[
         "customerID", "tenure", "MonthlyCharges", "Contract",
         "InternetService", "churn_prob", "risk_level"
     ]].copy()
+
+    # Add retention recommendation
+    show_df["Retention Recommendation"] = top_risk.apply(
+        lambda r: retention_recommendation(r, short=True),
+        axis=1
+    )
 
     show_df["Risk Score (%)"] = (show_df["churn_prob"] * 100).round(2)
 
@@ -669,14 +731,17 @@ with tab_segments:
             row_classes.append("")
     show_df["row_class"] = row_classes
 
-    # Build HTML
-    header_html = "<tr>" + "".join([f"<th>{col}</th>" for col in show_df.columns if col != "row_class"]) + "</tr>"
+    # Build HTML table
+    header_html = "<tr>" + "".join(
+        f"<th>{col}</th>" for col in show_df.columns if col != "row_class"
+    ) + "</tr>"
 
     body_html = ""
     for _, row in show_df.iterrows():
-        row_class = row["row_class"]
-        cells = "".join(f"<td>{row[col]}</td>" for col in show_df.columns if col != "row_class")
-        body_html += f"<tr class='{row_class}'>{cells}</tr>"
+        cells = "".join(
+            f"<td>{row[col]}</td>" for col in show_df.columns if col != "row_class"
+        )
+        body_html += f"<tr class='{row['row_class']}'>{cells}</tr>"
 
     html_table = f"""
     <table class="styled-table">
@@ -685,7 +750,10 @@ with tab_segments:
     </table>
     """
 
-    st.markdown(f"<div class='glass-table'>{html_table}</div>", unsafe_allow_html=True)
+    st.markdown(
+        f"<div class='glass-table'>{html_table}</div>",
+        unsafe_allow_html=True
+    )
 
     # ============================================================
     # 👤 CUSTOMER PROFILE VISUALIZATION
@@ -720,7 +788,19 @@ with tab_segments:
             </div>
             """, unsafe_allow_html=True)
 
-        # Visual Chart
+        # ---------------- RETENTION DETAILS ----------------
+        full_recs = retention_recommendation(cust, short=False)
+
+        st.markdown("""
+         <div class='profile-card'>
+             <h3>💡 Recommended Retention Actions</h3>
+             <ul>
+         """ + "".join(f"<li>{rec}</li>" for rec in full_recs) + """
+             </ul>
+        </div>
+        """, unsafe_allow_html=True)
+
+
         import plotly.graph_objects as go
         fig = go.Figure()
         fig.add_trace(go.Bar(
@@ -728,7 +808,11 @@ with tab_segments:
             y=[cust["tenure"], cust["MonthlyCharges"], cust["churn_prob"]*100],
             marker=dict(color=['#22c55e','#3b82f6','#ef4444'])
         ))
-        fig.update_layout(template="glass_neon", height=300, title="Customer Metric Visualization")
+        fig.update_layout(
+            template="glass_neon",
+            height=300,
+            title="Customer Metric Visualization"
+        )
         st.plotly_chart(fig, use_container_width=True)
 
 # ============================================================
@@ -799,10 +883,21 @@ with tab_predict:
 
             processed = preprocess_input(input_df)
 
-            # Probability
-            prob = float(model.predict_proba(processed)[0][1])
-            pred = 1 if prob > 0.5 else 0
-            risk_pct = prob * 100
+            # # Probability
+            # prob = float(model.predict_proba(processed)[0][1])
+            # pred = 1 if prob > 0.5 else 0
+            # risk_pct = prob * 100
+            api_result = predict_via_backend(processed)
+            if api_result:
+                prob = api_result["churn_probability"]
+                risk_pct = prob * 100
+                pred = 1 if api_result["risk_level"] == "High" else 0
+            else:
+                prob = float(model.predict_proba(processed)[0][1])
+                pred = 1 if prob > 0.5 else 0
+                risk_pct = prob * 100
+
+
 
             # Risk styling
             if risk_pct < 33:

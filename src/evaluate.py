@@ -9,7 +9,7 @@ import os
 
 PROCESSED_DATA_PATH = "data/processed/processed_data.csv"
 MODEL_PATH = "models/model.pkl"
-METRICS_PATH = "models/metrics.json"
+METRICS_PATH = "models/eval_metrics.json"
 
 
 def load_data():

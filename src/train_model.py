@@ -178,6 +178,8 @@ def main():
     best_model = None
     best_score = -1
     best_name = ""
+    best_metrics = None
+
 
     # Train each model
     for name, model in models.items():
@@ -201,6 +203,7 @@ def main():
             best_score = metrics[metric_to_rank_by]
             best_model = model
             best_name = name
+            best_metrics = metrics
 
     # Save leaderboard
     lb_df = pd.DataFrame(leaderboard)
@@ -213,10 +216,16 @@ def main():
 
     # Save correct JSON for Streamlit
     summary = {
-        "best_model": best_name,
-        "best_metric_name": metric_to_rank_by,
-        "best_metric_value": float(best_score)  
+    "best_model": best_name,
+    "best_metric_name": metric_to_rank_by,
+    "best_metric_value": float(best_score),
+    "accuracy": best_metrics["accuracy"],
+    "precision": best_metrics["precision"],
+    "recall": best_metrics["recall"],
+    "f1_score": best_metrics["f1_score"],
+    "roc_auc": best_metrics["roc_auc"]
     }
+
 
     with open(METRICS_PATH, "w") as f:
         json.dump(summary, f, indent=4)
