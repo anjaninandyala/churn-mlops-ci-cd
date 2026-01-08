@@ -1,10 +1,14 @@
 
+
+
 # Containerization of Data Science Workflows for CI/CD  
-### Telecom Customer Churn Prediction (MLOps Project)
+## Telecom Customer Churn Prediction (MLOps Project)
+
+
 
 ## 📌 Project Overview
-This project demonstrates how **Data Science workflows can be containerized and automated using CI/CD pipelines**.  
-It focuses on predicting **customer churn in the telecom industry** using machine learning, while showcasing **DevOps + MLOps practices** such as Docker, GitHub Actions, and modular pipelines.
+This project demonstrates how **data science workflows can be containerized and automated using CI/CD pipelines**.  
+It focuses on predicting **customer churn in the telecom industry** using machine learning, while showcasing **DevOps and MLOps practices** such as Docker, GitHub Actions, and modular pipelines.
 
 The system includes:
 - A complete ML pipeline (data preprocessing → training → evaluation)
@@ -13,15 +17,17 @@ The system includes:
 - Docker-based containerization
 - Automated CI/CD using GitHub Actions
 
+This project ensures **reproducibility, scalability, and automation** of machine learning workflows.
+
 ---
 
 ## 🎯 Problem Statement
-Customer churn refers to customers leaving a service provider.  
+Customer churn refers to customers discontinuing a service.  
 In the telecom industry, churn rates can reach **15–25% annually**, making early prediction critical.
 
-This project predicts churn in advance so that companies can:
+By predicting churn in advance, telecom companies can:
 - Identify high-risk customers
-- Take preventive retention actions
+- Apply targeted retention strategies
 - Reduce customer loss and revenue impact
 
 ---
@@ -29,10 +35,10 @@ This project predicts churn in advance so that companies can:
 ## 📊 Dataset
 **Telco Customer Churn Dataset**
 
-Contains:
+The dataset contains:
 - Customer demographics (gender, senior citizen, dependents)
-- Account information (tenure, contract, billing)
-- Services used (internet, security, tech support)
+- Account information (tenure, contract type, billing method)
+- Services used (internet, security, tech support, streaming)
 - Target variable: `Churn`
 
 ---
@@ -54,12 +60,12 @@ Contains:
    - Precision
    - Recall
    - F1-score
-   - ROC Curve & Confusion Matrix
+   - ROC Curve and Confusion Matrix
 5. **Model Selection**
-   - Best model selected automatically
+   - Best-performing model selected automatically
 6. **Model Deployment**
-   - Served via backend API
-   - Visualized using Streamlit
+   - Served through a FastAPI backend
+   - Visualized using Streamlit frontend
 
 ---
 
@@ -75,8 +81,9 @@ The **best-performing model** is automatically saved and used for predictions.
 ---
 
 ## 🖥️ Frontend (Streamlit Dashboard)
-- KPI metrics (Churn rate, High-risk customers)
-- Segment analysis (Contract, Internet, Payment Method)
+The Streamlit dashboard provides:
+- KPI metrics (churn rate, high-risk customers)
+- Segment analysis (contract type, internet service, payment method)
 - Feature importance visualization
 - Top at-risk customers table
 - Individual customer churn prediction
@@ -85,19 +92,19 @@ The **best-performing model** is automatically saved and used for predictions.
 ---
 
 ## ⚙️ Backend (FastAPI)
-- REST API for churn prediction
-- Separates model logic from UI
-- Enables scalable deployment
-- Used by Streamlit for predictions
+- Provides REST APIs for churn prediction
+- Separates model inference logic from the UI
+- Enables modular and scalable architecture
+- Streamlit frontend communicates with backend via HTTP requests
 
 ---
 
 ## 🐳 Containerization (Docker)
 - Frontend and backend run in separate containers
-- Ensures environment consistency
-- Easily deployable on any system
+- Ensures environment consistency across systems
+- Simplifies deployment and scaling
 
-Run everything with:
+Run the entire system using:
 ```bash
 docker compose up --build
 ````
@@ -106,13 +113,13 @@ docker compose up --build
 
 ## 🔁 CI/CD Pipeline (GitHub Actions)
 
-On every push:
+On every push to the main branch, the pipeline automatically:
 
-1. Run data preprocessing
-2. Train ML models
-3. Evaluate model performance
-4. Save model and metrics as artifacts
-5. Build Docker image
+1. Runs data preprocessing
+2. Trains machine learning models
+3. Evaluates model performance
+4. Saves model and metrics as artifacts
+5. Builds Docker images
 
 This ensures **continuous integration and automation of ML workflows**.
 
@@ -124,40 +131,40 @@ This ensures **continuous integration and automation of ML workflows**.
 churn-mlops-ci-cd/
 │
 ├── data/
-│ ├── raw/ # Original dataset (telco_churn.csv)
-│ └── processed/ # Preprocessed dataset (auto-generated)
+│   ├── raw/                  # Original dataset (telco_churn.csv)
+│   └── processed/            # Preprocessed dataset (auto-generated)
 │
 ├── src/
-│ ├── data_preprocessing.py # Data cleaning & feature engineering
-│ ├── train_model.py # Model training & selection
-│ └── evaluate.py # Model evaluation
+│   ├── data_preprocessing.py # Data cleaning & feature engineering
+│   ├── train_model.py        # Model training & selection
+│   └── evaluate.py           # Model evaluation
 │
 ├── models/
-│ ├── model.pkl # Best trained ML model
-│ ├── scaler.pkl
-│ ├── label_encoders.pkl
-│ ├── columns.pkl
-│ └── metrics.json # Evaluation summary
+│   ├── model.pkl             # Best trained ML model
+│   ├── scaler.pkl
+│   ├── label_encoders.pkl
+│   ├── columns.pkl
+│   └── metrics.json          # Evaluation summary
 │
 ├── reports/
-│ ├── cm_.png # Confusion matrices
-│ └── roc_.png # ROC curves
+│   ├── cm_*.png              # Confusion matrices
+│   └── roc_*.png             # ROC curves
 │
 ├── backend/
-│ ├── api.py # FastAPI backend
-│ └── init.py
+│   ├── api.py                # FastAPI backend
+│   └── __init__.py
 │
 ├── app/
-│ ├── app.py # Streamlit frontend
-│ └── Dockerfile # Frontend Dockerfile
+│   ├── app.py                # Streamlit frontend
+│   └── Dockerfile            # Frontend Dockerfile
 │
 ├── pipeline/
-│ └── Dockerfile # ML pipeline container
+│   └── Dockerfile            # ML pipeline container
 │
-├── docker-compose.yml # Orchestrates frontend + backend
-├── requirements.txt # Python dependencies
+├── docker-compose.yml        # Orchestrates frontend + backend
+├── requirements.txt          # Python dependencies
 ├── .github/workflows/
-│ └── ci-cd.yaml # CI/CD workflow
+│   └── ci-cd.yaml             # CI/CD workflow
 └── README.md
 ```
 
@@ -171,8 +178,8 @@ churn-mlops-ci-cd/
 docker compose up --build
 ```
 
-Frontend: [http://localhost:8501](http://localhost:8501)
-Backend: [http://localhost:8000](http://localhost:8000)
+* Frontend: [http://localhost:8501](http://localhost:8501)
+* Backend: [http://localhost:8000](http://localhost:8000)
 
 ---
 
@@ -189,21 +196,21 @@ streamlit run app/app.py
 
 ## ✅ Key Outcomes
 
-* Automated ML pipeline
-* Containerized deployment
-* CI/CD-enabled model training
+* End-to-end automated ML pipeline
+* Containerized frontend and backend
+* CI/CD-enabled model training and evaluation
 * Business-focused churn insights
-* Clean MLOps architecture
+* Clean and scalable MLOps architecture
 
 ---
 
 ## 🔮 Future Enhancements
 
-* Add database for prediction history
+* Database integration for prediction history
 * Advanced hyperparameter tuning
 * Cloud deployment (AWS / GCP)
 * Role-based dashboards
-* Real-time streaming data
+* Real-time streaming data integration
 
 ---
 
@@ -222,4 +229,7 @@ streamlit run app/app.py
 ## 👤 Author
 
 **Anjani Nandyala**
-Third Year B.Tech (CSE)
+B.Tech – Computer Science & Engineering
+Final Year Project
+**Title:** Containerization of Data Science Workflows for CI/CD
+
