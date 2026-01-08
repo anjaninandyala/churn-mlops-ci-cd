@@ -10,9 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project folders
 COPY app /app/app
 COPY backend /app/backend
-COPY models /app/models
 COPY data /app/data
-COPY reports /app/reports
+
 
 # Expose Streamlit port
 EXPOSE 8501
