@@ -222,8 +222,4 @@ streamlit run app/app.py
 ## 👤 Author
 
 **Anjani Nandyala**
-Final Year B.Tech (CSE)
-
-````
-
----
+Third Year B.Tech (CSE)
